@@ -1,0 +1,1 @@
+minikube image build . -t grpc-load-balancing-demo/client:v1.0.0

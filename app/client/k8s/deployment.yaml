@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: grpc-lb
+  name: client-app
+spec:
+  selector:
+    matchLabels:
+      app: client-app
+  template:
+    metadata:
+      labels:
+        app: client-app
+    spec:
+      containers:
+        - name: client-app
+          image: docker.io/grpc-load-balancing-demo/client:v1.0.0
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
+          env:
+            - name: port
+              valueFrom:
+                configMapKeyRef:
+                  key: port
+                  name: client-app-config
+            - name: serverHost
+              valueFrom:
+                configMapKeyRef:
+                  key: serverHost
+                  name: client-app-config
+          ports:
+            - containerPort: 9090
