@@ -9,7 +9,7 @@ I create two simple application to help me demonstrate that the current solution
 ```json
 // RESTful contract
   "detail": {
-    "from: 2a63ca4d-193f-4ec8-b9d3-49a39548bb95 replied by: 4bcbc60a-5700-4313-8772-c2a3ceab0513": 1000
+    "from: <server's_app_id>": <number_of_call>
   }
 ```
 
@@ -24,4 +24,21 @@ service EchoServer {
 }
 ```
 
+This is the deployment setup inside kubernetes.
+![alt text](image/initial-k8s-deployment-setup.png)
+
 Basically, the client app will count how many variance of the server app that serve its request. With this, we can conclude whether the request is well balanced or not.
+
+## Current Result
+
+When I test the response of the client app. I found this response.
+
+```json
+{
+  "detail": {
+    "from: 2a63ca4d-193f-4ec8-b9d3-49a39548bb95 replied by: 4bcbc60a-5700-4313-8772-c2a3ceab0513": 1000
+  }
+}
+```
+
+This shows that out of 10 server app's pod, only one serving the traffic.
