@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: client-app
-          image: docker.io/grpc-load-balancing-demo/client:v1.0.0
+          image: docker.io/grpc-load-balancing-demo/client:v1.0.0-client-load-balancing
           resources:
             limits:
               memory: "64Mi"

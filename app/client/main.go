@@ -86,12 +86,33 @@ func handleEchoCall(client echo_rpc.EchoServerClient) func(w http.ResponseWriter
 	}
 }
 
+func handleClientCheck(client *grpc.ClientConn) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var connInfo = map[string]any{
+			"target":          client.Target(),
+			"state":           client.GetState().String(),
+			"canonicalTarget": client.CanonicalTarget(),
+		}
+		jsonByte, err := json.Marshal(connInfo)
+		if err != nil {
+			logger.Error(err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.Write(jsonByte)
+	}
+}
+
 func main() {
 	config := loadConfig()
 	host := fmt.Sprintf(":%s", config.port)
 	insecureCred := grpc.WithTransportCredentials(insecure.NewCredentials())
 	logger.Info("dialling server", "server host", config.serverHost)
-	conn, err := grpc.NewClient(config.serverHost, insecureCred)
+	opts := []grpc.DialOption{
+		insecureCred,
+		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [ { "round_robin": {} } ]}`),
+	}
+	conn, err := grpc.NewClient(config.serverHost, opts...)
 	if err != nil {
 		logger.Error(err.Error())
 		panic(err.Error())
@@ -99,6 +120,7 @@ func main() {
 	defer conn.Close()
 	client := echo_rpc.NewEchoServerClient(conn)
 	http.HandleFunc("/echo", handleEchoCall(client))
+	http.HandleFunc("/conn", handleClientCheck(conn))
 	logger.Info("start client app", "host", host)
 	if err := http.ListenAndServe(host, nil); err != nil {
 		logger.Error(err.Error())

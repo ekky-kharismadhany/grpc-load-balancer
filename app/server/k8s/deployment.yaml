@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: server-app
-          image: docker.io/grpc-load-balancing-demo/server:v1.0.0
+          image: docker.io/grpc-load-balancing-demo/server:v1.0.0-client-load-balancing
           resources:
             limits:
               memory: "128Mi"
