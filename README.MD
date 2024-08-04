@@ -68,18 +68,29 @@ Yes, there is small code change to the application code. We need to add this lin
 
 ### Result
 
+Here is the client result with this curl request:
+
+```bash
+curl localhost:9090/echo?iter=1000 | jq
+```
+
 ```json
 {
   "detail": {
-    "from: 81cb9425-ecd0-4ef9-8103-079f4f111e64 replied by: 2077dd21-6440-4787-a8b0-8b9a2c87fade": 111,
-    "from: 81cb9425-ecd0-4ef9-8103-079f4f111e64 replied by: 2619c524-e3bf-46fd-9336-f81341fd9e26": 112,
-    "from: 81cb9425-ecd0-4ef9-8103-079f4f111e64 replied by: 2c2cecfd-28ef-4490-b159-57624356dbfc": 111,
-    "from: 81cb9425-ecd0-4ef9-8103-079f4f111e64 replied by: 500c7f4d-c71e-4f44-bf39-148ac7a15221": 111,
-    "from: 81cb9425-ecd0-4ef9-8103-079f4f111e64 replied by: 8953f032-8a23-4561-bb3f-34e378a0a274": 111,
-    "from: 81cb9425-ecd0-4ef9-8103-079f4f111e64 replied by: 912fb514-1966-44dd-a910-728606e78a23": 111,
-    "from: 81cb9425-ecd0-4ef9-8103-079f4f111e64 replied by: abd1cb27-4b17-4ca2-8849-bd8ea0bfe0f7": 111,
-    "from: 81cb9425-ecd0-4ef9-8103-079f4f111e64 replied by: c7987a7e-3ff2-44fe-aca9-22c03a18eacd": 111,
-    "from: 81cb9425-ecd0-4ef9-8103-079f4f111e64 replied by: d6dd0a1f-15e7-4f52-b0ab-06600bcbc99e": 111
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: 2077dd21-6440-4787-a8b0-8b9a2c87fade": 100,
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: 24b7647d-7bf7-48a8-965f-cfd3575444b6": 100,
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: 2c2cecfd-28ef-4490-b159-57624356dbfc": 100,
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: 388afcc2-890b-4261-b8ce-7ccab8668ccd": 100,
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: 4d61ae83-a384-46c8-adc9-8b00803f8134": 100,
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: 64b821be-d29c-4fe4-94b5-7b33a4b5558d": 100,
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: 8953f032-8a23-4561-bb3f-34e378a0a274": 100,
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: 912fb514-1966-44dd-a910-728606e78a23": 100,
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: abd1cb27-4b17-4ca2-8849-bd8ea0bfe0f7": 100,
+    "from: 5aa23e94-eafe-4928-b696-5f2efb22f290 replied by: b0ee357b-e051-404f-87ae-8f53b4c62f30": 100
   }
 }
 ```
+
+## Scaling Elasticity Issue
+
+I notice that the traffic load is not balanced directly after scale up event. This is because the resolver needs some time to retrieve newly created host and create a subroutine for the new host. This issue does not appear when we do scaling down the pods, as the subroutine's connectivity status is set to `TRANSIENT_FAILURE`, thus the client knows to not send any traffic to the pod.
