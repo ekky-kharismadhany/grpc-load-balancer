@@ -5,4 +5,4 @@ metadata:
   namespace: grpc-lb
 data:
   port: "9090"
-  serverHost: "server-app-service:8080"
+  serverHost: "envoy-proxy-service:80"
