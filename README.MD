@@ -94,3 +94,13 @@ curl localhost:9090/echo?iter=1000 | jq
 ## Scaling Elasticity Issue
 
 I notice that the traffic load is not balanced directly after scale up event. This is because the resolver needs some time to retrieve newly created host and create a subroutine for the new host. This issue does not appear when we do scaling down the pods, as the subroutine's connectivity status is set to `TRANSIENT_FAILURE`, thus the client knows to not send any traffic to the pod.
+
+## Latency Test
+
+This table shows latency between client <-> server. The client will call the server iter times syncrhonously. Time unit is on milliseconds.
+
+| iteration/round | 1    | 2    | 3    | 4    | 5    |
+|-----------------|------|------|------|------|------|
+| 10              | 39   | 54   | 33   | 29   | 109  |
+| 100             | 816  | 698  | 841  | 932  | 829  |
+| 1000            | 8683 | 9166 | 8807 | 8996 | 8170 |
